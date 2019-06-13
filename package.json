@@ -1,0 +1,12 @@
+{
+  "name": "moza-cli",
+  "version": "1.0.0",
+  "description": "a cli to interact with the middleware ",
+  "main": "app.js",
+  "author": "najjar chedy",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^2.20.0",
+    "inquirer": "^6.3.1"
+  }
+}

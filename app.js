@@ -23,8 +23,8 @@ program
   });
 
   program
-  .command('new <host> <remotePort> <entity> <entityname>')
-  .alias('u')
+  .command('disassociate <host> <remotePort> <identity>')
+  .alias('dis')
   .description('update the address and the port of the client located in the server')
   .action((host, port, entity, entityName) => {
     sendNewCMD({host, port}, entity, entityName);
@@ -32,7 +32,7 @@ program
 
   program
   .command('new <host> <remotePort> <entity> <entityname>')
-  .alias('u')
+  .alias('n')
   .description('update the address and the port of the client located in the server')
   .action((host, port, entity, entityName) => {
     sendNewCMD({host, port}, entity, entityName);
@@ -40,7 +40,7 @@ program
 
   program
   .command('delete <host> <remotePort> <entity> <entityname>')
-  .alias('u')
+  .alias('d')
   .description('update the address and the port of the client located in the server')
   .action((host, port, entity, entityName) => {
     sendDeleteCMD({host, port}, entity, entityName);

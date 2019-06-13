@@ -1,6 +1,6 @@
 const program = require('commander');
 // Require logic.js file and extract controller functions using JS destructuring assignment
-const { sendContextCMD, sendUpdateCMD, sendNewCMD, sendDeleteCMD } = require('./moza');
+const { sendContextCMD, sendUpdateCMD, sendNewCMD, sendDeleteCMD, sendJoinCMD } = require('./moza');
 
 program
   .version('0.0.1')
@@ -31,19 +31,28 @@ program
   });
 
   program
-  .command('new <host> <remotePort> <entity> <entityname>')
+  .command('new <host> <remotePort> <entity> <entityname> <grouptype>')
   .alias('n')
-  .description('update the address and the port of the client located in the server')
-  .action((host, port, entity, entityName) => {
-    sendNewCMD({host, port}, entity, entityName);
+  .description('add a new entity to the specified middleware with <entityname> s it\'s name')
+  .action((host, port, entity, entityName, groupType) => {
+    sendNewCMD({host, port}, entity, entityName, groupType);
   });
 
   program
   .command('delete <host> <remotePort> <entity> <entityname>')
   .alias('d')
-  .description('update the address and the port of the client located in the server')
+  .description('delete the entity with name <entityname>')
   .action((host, port, entity, entityName) => {
     sendDeleteCMD({host, port}, entity, entityName);
+  });
+
+  program
+  .command('join <host> <remotePort> <identity> <entity> <entityname> <membershiptype> [annotation]')
+  .alias('j')
+  .description('client rejoind le goupe de nom <entityname>')
+  .action((host, port, identity, entity, entityName, membershipType, annotation) => {
+    console.log('annotation value=', annotation)
+    sendJoinCMD({host, port}, identity, entity, entityName, membershipType, annotation);
   });
 
   program.parse(process.argv);

@@ -265,7 +265,7 @@ function sendLeaveCMD(remoteAddr, id, entity, entityName, membershipType) {
   });
 }
 
-function sendPushCMD(remoteAddr, entity, entityName, data) {
+function sendPushCMD(remoteAddr, id, entity, entityName, data) {
   const clientSock = new Net.Socket();
 
   clientSock.setKeepAlive(true);

@@ -1,6 +1,6 @@
 const program = require('commander');
 // Require logic.js file and extract controller functions using JS destructuring assignment
-const { sendContextCMD, sendUpdateCMD, sendNewCMD, sendDeleteCMD, sendJoinCMD, sendLeaveCMD } = require('./moza');
+const { sendContextCMD, sendUpdateCMD, sendNewCMD, sendDeleteCMD, sendJoinCMD, sendLeaveCMD, sendPushCMD } = require('./moza');
 
 program
   .version('0.0.1')
@@ -63,4 +63,13 @@ program
     sendLeaveCMD({host, port}, identity, entity, entityName, membershipType);
   });
 
+  program
+  .command('push <host> <remotePort>  <entity> <entityname> <data> ')
+  .alias('p')
+  .description('client publie un message pour le goupe de nom <entityname>')
+  .action((host, port, id,  entity, entityName, data) => {
+    sendPushCMD({host, port}, id, entity, entityName, data);
+  });
+
+  
   program.parse(process.argv);

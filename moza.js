@@ -265,5 +265,49 @@ function sendLeaveCMD(remoteAddr, id, entity, entityName, membershipType) {
   });
 }
 
+function sendPushCMD(remoteAddr, entity, entityName, data) {
+  const clientSock = new Net.Socket();
 
-module.exports = { sendContextCMD, sendUpdateCMD, sendNewCMD, sendDeleteCMD, sendJoinCMD, sendLeaveCMD };
+  clientSock.setKeepAlive(true);
+
+  const msg =
+    "MOZA v1.0\r\n" +
+    "LEAVE\r\n" +
+    `LENGTH : ${data.length}\r\n` +
+    "ARGS : 3\r\n" +
+    `Identity : ${id}\r\n` +
+    `Entity : ${entity}\r\n` +
+    `EntityName : ${entityName}\r\n` +
+    "\r\n" +
+    `${data}`;
+  clientSock.connect(remoteAddr, function() {
+    console.log("TCP connection established with the server.");
+    clientSock.write(msg);
+  });
+
+  // The client can also receive data from the server by reading from its socket.
+  clientSock.on("data", function(chunk) {
+    const str = chunk.toString();
+    console.log(`Data received from the server: ${str}.`);
+    const tokens = str.split("\r\n");
+    if (tokens[0] === "PUSH_OK") {
+      console.log("le client a quitté le groupe");
+    } else if (tokens[0] === "PUSH_ERR") {
+      console.log("Commande échoué");
+      console.log("Le serveur n'a pas pu faire l'opération :");
+      console.log(tokens[1]);
+    } else {
+      console.log("réponse incorrecte");
+    }
+  });
+
+  clientSock.on("end", function() {
+    console.log("Requested an end to the TCP connection");
+  });
+
+  clientSock.on("error", function(err) {
+    console.log("error ", err.message);
+  });
+}
+
+module.exports = { sendContextCMD, sendUpdateCMD, sendNewCMD, sendDeleteCMD, sendJoinCMD, sendLeaveCMD, sendPushCMD };

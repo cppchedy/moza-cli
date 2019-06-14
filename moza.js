@@ -220,18 +220,20 @@ function sendJoinCMD(remoteAddr, id, entity, entityName, membershipType, annotat
 }
 
 
-function sendLeaveCMD(remoteAddr, entity, entityName) {
+function sendLeaveCMD(remoteAddr, id, entity, entityName, membershipType) {
   const clientSock = new Net.Socket();
 
   clientSock.setKeepAlive(true);
 
   const msg =
     "MOZA v1.0\r\n" +
-    "DELETE\r\n" +
+    "LEAVE\r\n" +
     "LENGTH : 0\r\n" +
-    "ARGS : 2\r\n" +
+    "ARGS : 4\r\n" +
+    `Identity : ${id}\r\n` +
     `Entity : ${entity}\r\n` +
     `EntityName : ${entityName}\r\n` +
+    `MembershipType : ${membershipType}\r\n` +
     "\r\n";
   clientSock.connect(remoteAddr, function() {
     console.log("TCP connection established with the server.");
@@ -243,11 +245,11 @@ function sendLeaveCMD(remoteAddr, entity, entityName) {
     const str = chunk.toString();
     console.log(`Data received from the server: ${str}.`);
     const tokens = str.split("\r\n");
-    if (tokens[0] === "DELETE_OK") {
-      console.log("l'entité a été supprimé");
-    } else if (tokens[0] === "DELETE_ERR") {
+    if (tokens[0] === "LEAVE_OK") {
+      console.log("le client a quitté le groupe");
+    } else if (tokens[0] === "LEAVE_ERR") {
       console.log("Commande échoué");
-      console.log("Le serveur n'a pas pu supprimé l'entité :");
+      console.log("Le serveur n'a pas pu faire l'opération :");
       console.log(tokens[1]);
     } else {
       console.log("réponse incorrecte");
@@ -264,4 +266,4 @@ function sendLeaveCMD(remoteAddr, entity, entityName) {
 }
 
 
-module.exports = { sendContextCMD, sendUpdateCMD, sendNewCMD, sendDeleteCMD, sendJoinCMD };
+module.exports = { sendContextCMD, sendUpdateCMD, sendNewCMD, sendDeleteCMD, sendJoinCMD, sendLeaveCMD };

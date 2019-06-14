@@ -64,7 +64,7 @@ program
   });
 
   program
-  .command('push <host> <remotePort>  <entity> <entityname> <data> ')
+  .command('push <host> <remotePort> <identity> <entity> <entityname> <data> ')
   .alias('p')
   .description('client publie un message pour le goupe de nom <entityname>')
   .action((host, port, id,  entity, entityName, data) => {

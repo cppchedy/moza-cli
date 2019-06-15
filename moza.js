@@ -3,14 +3,14 @@ const chalk = require('chalk');
 const figures = require('figures');
 
 
-function handleSocket(remoteAddr, msg) {
+function handleSocket(remoteAddr, pdu, cmd, succMsg, errMsg) {
   const clientSock = new Net.Socket();
 
   clientSock.setKeepAlive(true);
 
   clientSock.connect(remoteAddr, function() {
-    console.log(chalk.green(figures('✔︎')), chalk.green("TCP connection established with the server"));
-    clientSock.write(msg);
+    console.log(chalk.green(figures('✔︎')), chalk.green("Connection TCP établie avec le server"));
+    clientSock.write(pdu);
   });
 
   // The client can also receive data from the server by reading from its socket.
@@ -21,19 +21,21 @@ function handleSocket(remoteAddr, msg) {
     console.log(chalk.yellow(str));
     const tokens = str.split("\r\n");
 
-    if (tokens[0] === "CONTEXT_OK") {
-      console.log("Contexte ajouté");
-      console.log(tokens[1]);
-    } else if (tokens[0] === "CONTEXT_ERR") {
+    if (tokens[0] === `${cmd}_OK`) {
+      console.log(chalk.green(figures('✔︎')), chalk.green(succMsg));
+      if(tokens[0] == "CONTEXT_OK")
+        console.log(chalk.blue(tokens[1]));
+    } else if (tokens[0] === `${cmd}_ERR`) {
       console.log(chalk.red("Commande échoué"));
-      console.log("Le serveur n'a pas pu ajouter un contexte");
+      console.log(errMsg);
+      console.log(tokens[1]);
     } else {
       console.log(chalk.red(figures('×')), chalk.red("réponse incorrecte"));
     }
   });
 
   clientSock.on("end", function() {
-    console.log(chalk.red(figures('×')), chalk.red("Requested an end to the TCP connection"));
+    console.log(chalk.green(figures('✔︎')), chalk.green("Fin de la connection TCP "));
   });
 
   clientSock.on("error", function(err) {
@@ -49,7 +51,7 @@ function sendContextCMD(remoteAddr) {
     "ARGS : 0\r\n" +
     "\r\n";
 
-  handleSocket(remoteAddr, msg);
+  handleSocket(remoteAddr, msg, "CONTEXT", "Contexte ajouté", "Le serveur n'a pas pu ajouter un contexte");
 }
 
 function sendUpdateCMD(remoteAddr, id, listeningPort) {
@@ -62,7 +64,7 @@ function sendUpdateCMD(remoteAddr, id, listeningPort) {
     `Port : ${listeningPort}\r\n` +
     "\r\n";
 
-  handleSocket(remoteAddr, msg);
+  handleSocket(remoteAddr, msg, "UPDATE", "mise à jour effectué", "Le serveur n'a pas pu mettre à jour le port :");
 }
 
 function sendDiassociateCMD() {}
@@ -78,7 +80,7 @@ function sendNewCMD(remoteAddr, entity, entityName, groupType) {
     `GroupType : ${groupType}\r\n`+
     "\r\n";
 
-  handleSocket(remoteAddr, msg);
+  handleSocket(remoteAddr, msg, "NEW", "l'entité a été ajouté", "Le serveur n'a pas pu ajouter l'entité :");
 }
 
 function sendDeleteCMD(remoteAddr, entity, entityName) {
@@ -91,7 +93,7 @@ function sendDeleteCMD(remoteAddr, entity, entityName) {
     `EntityName : ${entityName}\r\n` +
     "\r\n";
 
-  handleSocket(remoteAddr, msg);
+  handleSocket(remoteAddr, msg, "DELETE", "l'entité a été supprimé", "Le serveur n'a pas pu supprimé l'entité :");
 }
 
 function sendJoinCMD(remoteAddr, id, entity, entityName, membershipType, annotation) {
@@ -107,7 +109,7 @@ function sendJoinCMD(remoteAddr, id, entity, entityName, membershipType, annotat
     `Annotation : ${annotation}\r\n` +
     "\r\n";
 
-  handleSocket(remoteAddr, msg);
+  handleSocket(remoteAddr, msg, "JOIN", "le client a rejoind le groupe", "Le serveur n'a pas pu faire la jointure :");
 }
 
 
@@ -123,7 +125,7 @@ function sendLeaveCMD(remoteAddr, id, entity, entityName, membershipType) {
     `MembershipType : ${membershipType}\r\n` +
     "\r\n";
 
-  handleSocket(remoteAddr, msg);
+  handleSocket(remoteAddr, msg, "LEAVE", "le client a quitté le groupe", "Le serveur n'a pas pu faire l'opération :");
 }
 
 function sendPushCMD(remoteAddr, id, entity, entityName, data) {
@@ -138,7 +140,7 @@ function sendPushCMD(remoteAddr, id, entity, entityName, data) {
     "\r\n" +
     `${data}`;
 
-  handleSocket(remoteAddr, msg);
+  handleSocket(remoteAddr, msg, "PUSH", "Le message a été envoyé", "Le serveur n'a pas pu faire l'opération :");
 }
 
 module.exports = { sendContextCMD, sendUpdateCMD, sendNewCMD, sendDeleteCMD, sendJoinCMD, sendLeaveCMD, sendPushCMD };

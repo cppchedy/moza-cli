@@ -64,11 +64,19 @@ program
   });
 
   program
-  .command('push <host> <remotePort>  <entity> <entityname> <data> ')
+  .command('push <host> <remotePort> <identity> <entity> <entityname> <data> ')
   .alias('p')
   .description('client publie un message pour le goupe de nom <entityname>')
   .action((host, port, id,  entity, entityName, data) => {
     sendPushCMD({host, port}, id, entity, entityName, data);
+  });
+
+  program
+  .command('consumer <host> <remotePort> <identity> <port>  ')
+  .alias('p')
+  .description('start a server listening on port for incomming message')
+  .action((host, rPort, id,  port) => {
+    initServer({host, rPort}, id,port);
   });
 
   

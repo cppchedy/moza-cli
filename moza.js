@@ -126,10 +126,10 @@ function sendLeaveCMD(remoteAddr, id, entity, entityName, membershipType) {
   handleSocket(remoteAddr, msg);
 }
 
-function sendPushCMD(remoteAddr, entity, entityName, data) {
+function sendPushCMD(remoteAddr, id, entity, entityName, data) {
   const msg =
     "MOZA v1.0\r\n" +
-    "LEAVE\r\n" +
+    "PUSH\r\n" +
     `LENGTH : ${data.length}\r\n` +
     "ARGS : 3\r\n" +
     `Identity : ${id}\r\n` +

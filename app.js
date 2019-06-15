@@ -71,5 +71,13 @@ program
     sendPushCMD({host, port}, id, entity, entityName, data);
   });
 
+  program
+  .command('consumer <host> <remotePort> <identity> <port>  ')
+  .alias('p')
+  .description('start a server listening on port for incomming message')
+  .action((host, rPort, id,  port) => {
+    initServer({host, rPort}, id,port);
+  });
+
   
   program.parse(process.argv);

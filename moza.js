@@ -1,4 +1,7 @@
 const Net = require("net");
+const chalk = require('chalk');
+const figures = require('figures');
+
 
 function handleSocket(remoteAddr, msg) {
   const clientSock = new Net.Socket();
@@ -6,7 +9,7 @@ function handleSocket(remoteAddr, msg) {
   clientSock.setKeepAlive(true);
 
   clientSock.connect(remoteAddr, function() {
-    console.log("TCP connection established with the server");
+    console.log(chalk.green(figures('✔︎')), chalk.green("TCP connection established with the server"));
     clientSock.write(msg);
   });
 
@@ -15,26 +18,26 @@ function handleSocket(remoteAddr, msg) {
     const str = chunk.toString();
     console.log();
     console.log('Data received from the server:');
-    console.log(str);
+    console.log(chalk.yellow(str));
     const tokens = str.split("\r\n");
 
     if (tokens[0] === "CONTEXT_OK") {
       console.log("Contexte ajouté");
       console.log(tokens[1]);
     } else if (tokens[0] === "CONTEXT_ERR") {
-      console.log("Commande échoué");
+      console.log(chalk.red("Commande échoué"));
       console.log("Le serveur n'a pas pu ajouter un contexte");
     } else {
-      console.log("réponse incorrecte");
+      console.log(chalk.red(figures('×')), chalk.red("réponse incorrecte"));
     }
   });
 
   clientSock.on("end", function() {
-    console.log("Requested an end to the TCP connection");
+    console.log(chalk.red(figures('×')), chalk.red("Requested an end to the TCP connection"));
   });
 
   clientSock.on("error", function(err) {
-    console.log("error ", err.message);
+    console.log(chalk.red("error "), err.message);
   });
 }
 
